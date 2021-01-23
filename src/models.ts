@@ -81,6 +81,11 @@ export class ContextItem extends vscode.TreeItem {
     this.name = this.label as string;
     this._ext = path.extname(this.resource.path);
     this.contextValue = "ccs.contextItem";
+    this.command = {
+        title: "open",
+        command: "ccs.openItemInEditor",
+        arguments: [this]
+    }
   }
 
   readonly name: string 

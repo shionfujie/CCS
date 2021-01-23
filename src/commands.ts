@@ -74,6 +74,13 @@ export function Commands(
     item.context.removeContextItem(item);
     provider.refresh();
   }
+  function OpenItemInEditor(item: models.ContextItem) {
+    if (item.type == vscode.FileType.Directory) {
+      vscode.commands.executeCommand("revealInExplorer", item.resource);
+      return;
+    }
+    vscode.commands.executeCommand("vscode.open", item.resource);
+  }
   return {
     CreateNewContext,
     RenameContext,
@@ -81,7 +88,8 @@ export function Commands(
     SortByName,
     SortByCategory,
     AddItemToContext,
-    RemoveItemFromContext
+    RemoveItemFromContext,
+    OpenItemInEditor
   };
 }
 

@@ -67,6 +67,10 @@
 				}
 			},
 			{
+				"command": "ccs.openItemInEditor",
+				"title": "Open Item in Editor"
+			},
+			{
 				"command": "ccs.refresh",
 				"title": "Refresh",
 				"icon": {
