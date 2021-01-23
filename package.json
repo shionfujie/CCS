@@ -45,6 +45,14 @@
 				"command": "ccs.addItemToContext",
 				"title": "Add Item to Context",
 				"category": "Context"
+			},
+			{
+				"command": "css.removeItemFromContext",
+				"title": "Remove Item from Context",
+				"icon": {
+					"dark": "./media/dark/remove.svg",
+					"light": "./media/light/remove.svg"
+				}
 			}
 		],
 		"menus": {
@@ -59,6 +67,10 @@
 					"command": "ccs.removeContext",
 					"when": "viewItem == ccs.context",
 					"group": "navigation@2"
+				},
+				{
+					"command": "css.removeItemFromContext",
+					"when": "viewItem == ccs.contextItem"
 				}
 			]
 		}

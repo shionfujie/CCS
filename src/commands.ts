@@ -45,10 +45,15 @@ export function Commands(
       focus: true,
     });
   }
+  function RemoveItemFromContext(item: models.ContextItem) {
+    item.context.removeContextItem(item);
+    provider.refresh();
+  }
   return {
     CreateNewContext,
     RemoveContext,
     AddItemToContext,
+    RemoveItemFromContext
   };
 }
 

@@ -5,7 +5,7 @@ export class Context extends vscode.TreeItem {
   constructor(private _name: string) {
     super(_name, vscode.TreeItemCollapsibleState.Expanded);
     this.id = _name;
-    this.contextValue = "ccs.context"
+    this.contextValue = "ccs.context";
   }
   name() {
     return this._name;
@@ -38,6 +38,17 @@ export class Context extends vscode.TreeItem {
     this._items.push(item);
     return [item, true];
   }
+
+  removeContextItem(item: ContextItem) {
+    this.removeContextItemUri(item.resource);
+  }
+
+  removeContextItemUri(resource: vscode.Uri) {
+    const repr = resource.toString();
+    this._items = this._items.filter(
+      (item) => item.resource.toString() != repr
+    );
+  }
 }
 
 enum SortBy {
@@ -45,7 +56,7 @@ enum SortBy {
   Category,
 }
 
-class ContextItem extends vscode.TreeItem {
+export class ContextItem extends vscode.TreeItem {
   constructor(
     readonly context: Context,
     readonly resource: vscode.Uri,
@@ -55,6 +66,7 @@ class ContextItem extends vscode.TreeItem {
     if (type == vscode.FileType.Directory) {
       this.label = this.label + "/";
     }
+    this.contextValue = "ccs.contextItem";
   }
 
   readonly name: string = this.label as string;
@@ -94,7 +106,7 @@ export class ContextsProvider
         this._contexts.sort((c, c1) => c.name().localeCompare(c1.name()))
       );
     }
-    
+
     if (element instanceof Context) {
       return Promise.resolve(element.items());
     }
