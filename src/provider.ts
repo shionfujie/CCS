@@ -104,8 +104,11 @@ export class ContextsProvider
     }
   }
 
-  refresh(elem?: vscode.TreeItem): void {
-    this._onDidChangeTreeData.fire(elem);
+  refresh(newContexts?: models.Context[]): void {
+    if(newContexts) {
+      this._contexts = newContexts
+    }
+    this._onDidChangeTreeData.fire();
   }
 
   findContext(name: String): models.Context | undefined {
