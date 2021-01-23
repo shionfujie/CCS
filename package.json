@@ -46,6 +46,14 @@
 				}
 			},
 			{
+				"command": "ccs.sortByName",
+				"title": "Sort By: Name"
+			},
+			{
+				"command": "ccs.sortByCategory",
+				"title": "Sort By: Category"
+			},
+			{
 				"command": "ccs.addItemToContext",
 				"title": "Add Item to Context",
 				"category": "Context"
@@ -76,6 +84,16 @@
 					"command": "ccs.removeContext",
 					"when": "viewItem == ccs.context",
 					"group": "navigation@2"
+				},
+				{
+					"command": "ccs.sortByName",
+					"when": "viewItem == ccs.context",
+					"group": "sorting"
+				},
+				{
+					"command": "ccs.sortByCategory",
+					"when": "viewItem == ccs.context",
+					"group": "sorting"
 				},
 				{
 					"command": "ccs.removeItemFromContext",

@@ -19,11 +19,18 @@ export class Context extends vscode.TreeItem {
       if (typeDiff != 0) {
         return typeDiff;
       }
+      const extDiff =
+          this.sortBy == SortBy.Category
+            ? item.ext().localeCompare(item1.ext())
+            : 0;
+        if (extDiff != 0) {
+          return extDiff;
+        }
       return item.name.localeCompare(item1.name);
     });
   }
 
-  sortBy: SortBy = SortBy.Category;
+  sortBy: SortBy = SortBy.Name;
 
   rename(name: string) {
     this._name = name;
@@ -56,7 +63,7 @@ export class Context extends vscode.TreeItem {
   }
 }
 
-enum SortBy {
+export enum SortBy {
   Name = 0,
   Category,
 }
@@ -71,10 +78,17 @@ export class ContextItem extends vscode.TreeItem {
     if (type == vscode.FileType.Directory) {
       this.label = this.label + "/";
     }
+    this.name = this.label as string;
+    this._ext = path.extname(this.resource.path);
     this.contextValue = "ccs.contextItem";
   }
 
-  readonly name: string = this.label as string;
+  readonly name: string 
+
+  private _ext: string;
+  ext() {
+    return this._ext;
+  }
 }
 
 async function NewContextItem(context: Context, resource: vscode.Uri) {

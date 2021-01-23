@@ -35,6 +35,18 @@ export function Commands(
     provider.removeContext(context);
     provider.refresh();
   }
+  function SortByName(context: models.Context) {
+    if (context.sortBy != models.SortBy.Name) {
+      context.sortBy = models.SortBy.Name;
+      provider.refresh();
+    }
+  }
+  function SortByCategory(context: models.Context) {
+    if (context.sortBy != models.SortBy.Category) {
+      context.sortBy = models.SortBy.Category;
+      provider.refresh();
+    }
+  }
   async function AddItemToContext(arg: any) {
     var uri: vscode.Uri | undefined;
     if (arg === undefined) {
@@ -66,6 +78,8 @@ export function Commands(
     CreateNewContext,
     RenameContext,
     RemoveContext,
+    SortByName,
+    SortByCategory,
     AddItemToContext,
     RemoveItemFromContext
   };

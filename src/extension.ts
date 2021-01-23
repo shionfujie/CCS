@@ -18,6 +18,8 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("ccs.createNewContext", commands.CreateNewContext),
     vscode.commands.registerCommand("ccs.renameContext", commands.RenameContext),
     vscode.commands.registerCommand("ccs.removeContext", commands.RemoveContext),
+    vscode.commands.registerCommand("ccs.sortByName", commands.SortByName),
+    vscode.commands.registerCommand("ccs.sortByCategory", commands.SortByCategory),
     vscode.commands.registerCommand("ccs.addItemToContext", commands.AddItemToContext),
     vscode.commands.registerCommand("ccs.removeItemFromContext", commands.RemoveItemFromContext)
   );
