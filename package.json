@@ -1,6 +1,7 @@
 {
 	"name": "ccs",
 	"displayName": "CCS",
+	"publisher": "shionf",
 	"description": "Context Control System",
 	"version": "0.0.0",
 	"engines": {
