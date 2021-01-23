@@ -10,7 +10,7 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onView:contextExplorer"
+		"onView:ccs.contextExplorer"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
