@@ -1,6 +1,7 @@
 {
 	"name": "ccs",
 	"displayName": "CCS",
+	"publisher": "shionf",
 	"description": "Context Control System",
 	"version": "0.0.0",
 	"engines": {
@@ -10,16 +11,145 @@
 		"Other"
 	],
 	"activationEvents": [
-		"onCommand:ccs.helloWorld"
+		"onView:ccs.contextExplorer"
 	],
 	"main": "./out/extension.js",
 	"contributes": {
+		"views": {
+			"explorer": [
+				{
+					"id": "ccs.contextExplorer",
+					"name": "Contexts",
+					"contextualTitle": "Context Explorer"
+				}
+			]
+		},
 		"commands": [
 			{
-				"command": "ccs.helloWorld",
-				"title": "Hello World"
+				"command": "ccs.createNewContext",
+				"title": "Create New Context",
+				"category": "Context",
+				"icon": {
+					"dark": "./media/dark/add.svg",
+					"light": "./media/light/add.svg"
+				}
+			},
+			{
+				"command": "ccs.renameContext",
+				"title": "Rename"
+			},
+			{
+				"command": "ccs.removeContext",
+				"title": "Remove Context",
+				"icon": {
+					"dark": "./media/dark/trash.svg",
+					"light": "./media/light/trash.svg"
+				}
+			},
+			{
+				"command": "ccs.viewContextDocument",
+				"title": "View Context Document",
+				"icon": {
+					"dark": "./media/dark/open-preview.svg",
+					"light": "./media/light/open-preview.svg"
+				}
+			},
+			{
+				"command": "ccs.sortByName",
+				"title": "Sort By: Name"
+			},
+			{
+				"command": "ccs.sortByCategory",
+				"title": "Sort By: Category"
+			},
+			{
+				"command": "ccs.addItemToContext",
+				"title": "Add Item to Context",
+				"category": "Context"
+			},
+			{
+				"command": "ccs.removeItemFromContext",
+				"title": "Remove Item from Context",
+				"icon": {
+					"dark": "./media/dark/remove.svg",
+					"light": "./media/light/remove.svg"
+				}
+			},
+			{
+				"command": "ccs.openItemInEditor",
+				"title": "Open Item in Editor"
+			},
+			{
+				"command": "ccs.searchContext",
+				"title": "Search Contexts",
+				"category": "Context"
+			},
+			{
+				"command": "ccs.refresh",
+				"title": "Refresh",
+				"icon": {
+					"dark": "./media/dark/refresh.svg",
+					"light": "./media/light/refresh.svg"
+				}
 			}
-		]
+		],
+		"viewsWelcome": [
+			{
+				"view": "ccs.contextExplorer",
+				"contents": "[New Context](command:ccs.createNewContext)"
+			}
+		],
+		"menus": {
+			"view/title": [
+				{
+					"command": "ccs.createNewContext",
+					"when": "view == ccs.contextExplorer",
+					"group": "navigation@1"
+				},
+				{
+					"command": "ccs.refresh",
+					"when": "view == ccs.contextExplorer",
+					"group": "navigation@2"
+				}
+			],
+			"explorer/context": [
+				{
+					"command": "ccs.addItemToContext",
+					"group": "0_ccs.context"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "ccs.renameContext",
+					"when": "viewItem == ccs.context",
+					"group": "navigation@1"
+				},
+				{
+					"command": "ccs.removeContext",
+					"when": "viewItem == ccs.context",
+					"group": "navigation@2"
+				},
+				{
+					"command": "ccs.viewContextDocument",
+					"when": "viewItem == ccs.context",
+					"group": "inline@1"
+				},
+				{
+					"command": "ccs.sortByName",
+					"when": "viewItem == ccs.context",
+					"group": "sorting"
+				},
+				{
+					"command": "ccs.sortByCategory",
+					"when": "viewItem == ccs.context",
+					"group": "sorting"
+				},
+				{
+					"command": "ccs.removeItemFromContext",
+					"when": "viewItem == ccs.contextItem"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

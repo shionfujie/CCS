@@ -1,27 +1,43 @@
-// The module 'vscode' contains the VS Code extensibility API
-// Import the module and reference it with the alias vscode in your code below
-import * as vscode from 'vscode';
 
-// this method is called when your extension is activated
-// your extension is activated the very first time the command is executed
-export function activate(context: vscode.ExtensionContext) {
+import * as vscode from "vscode";
+import {Commands} from "./commands";
+import { ContextsProvider } from "./provider";
+import { Storage} from './storage';
+import {NewContextsAdapter} from './adapter'
 
-	// Use the console to output diagnostic information (console.log) and errors (console.error)
-	// This line of code will only be executed once when your extension is activated
-	console.log('Congratulations, your extension "ccs" is now active!');
 
-	// The command has been defined in the package.json file
-	// Now provide the implementation of the command with registerCommand
-	// The commandId parameter must match the command field in package.json
-	let disposable = vscode.commands.registerCommand('ccs.helloWorld', () => {
-		// The code you place here will be executed every time your command is executed
-
-		// Display a message box to the user
-		vscode.window.showInformationMessage('Hello World from CCS!');
-	});
-
-	context.subscriptions.push(disposable);
+export async function activate(context: vscode.ExtensionContext) {
+  const storage = Storage(NewContextsAdapter())
+  const provider = new ContextsProvider(await storage.GetContexts());
+  const treeView = vscode.window.createTreeView("ccs.contextExplorer", {
+    treeDataProvider: provider,
+    showCollapseAll: true,
+  });
+  const commands = Commands(provider, treeView, storage)
+  context.subscriptions.push(
+    vscode.commands.registerCommand("ccs.createNewContext", commands.CreateNewContext),
+    vscode.commands.registerCommand("ccs.renameContext", commands.RenameContext),
+    vscode.commands.registerCommand("ccs.removeContext", commands.RemoveContext),
+    vscode.commands.registerCommand("ccs.viewContextDocument", commands.ViewContextDocument),
+    vscode.commands.registerCommand("ccs.sortByName", commands.SortByName),
+    vscode.commands.registerCommand("ccs.sortByCategory", commands.SortByCategory),
+    vscode.commands.registerCommand("ccs.addItemToContext", commands.AddItemToContext),
+    vscode.commands.registerCommand("ccs.removeItemFromContext", commands.RemoveItemFromContext),
+    vscode.commands.registerCommand("ccs.openItemInEditor", commands.OpenItemInEditor),
+    vscode.commands.registerCommand("ccs.searchContext", commands.SearchContext),
+    vscode.commands.registerCommand("ccs.refresh", () => provider.refresh()),
+    provider.onDidChangeTreeData(() => storage.SaveContexts(provider.contexts())),
+    vscode.workspace.onWillDeleteFiles((event) => {
+      event.waitUntil(
+        (async () => {
+          for (const f of event.files) {
+            await provider.removeResourceFromContexts(f);
+          }
+          provider.refresh();
+        })()
+      );
+    })
+  );
 }
 
-// this method is called when your extension is deactivated
 export function deactivate() {}
