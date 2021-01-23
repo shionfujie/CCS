@@ -46,6 +46,14 @@
 				}
 			},
 			{
+				"command": "ccs.viewContextDocument",
+				"title": "View Context Document",
+				"icon": {
+					"dark": "./media/dark/open-preview.svg",
+					"light": "./media/light/open-preview.svg"
+				}
+			},
+			{
 				"command": "ccs.sortByName",
 				"title": "Sort By: Name"
 			},
@@ -87,7 +95,7 @@
 		"viewsWelcome": [
 			{
 				"view": "ccs.contextExplorer",
-				"contents": "[New Context](command:better-of-mine.addContext)"
+				"contents": "[New Context](command:ccs.createNewContext)"
 			}
 		],
 		"menus": {
@@ -119,6 +127,11 @@
 					"command": "ccs.removeContext",
 					"when": "viewItem == ccs.context",
 					"group": "navigation@2"
+				},
+				{
+					"command": "ccs.viewContextDocument",
+					"when": "viewItem == ccs.context",
+					"group": "inline@1"
 				},
 				{
 					"command": "ccs.sortByName",

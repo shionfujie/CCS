@@ -20,21 +20,34 @@ export class Context extends vscode.TreeItem {
         return typeDiff;
       }
       const extDiff =
-          this.sortBy == SortBy.Category
-            ? item.ext().localeCompare(item1.ext())
-            : 0;
-        if (extDiff != 0) {
-          return extDiff;
-        }
+        this.sortBy == SortBy.Category
+          ? item.ext().localeCompare(item1.ext())
+          : 0;
+      if (extDiff != 0) {
+        return extDiff;
+      }
       return item.name.localeCompare(item1.name);
     });
+  }
+
+  private _contextDocument: ContextDocument | undefined = undefined;
+  contextDocument(): ContextDocument | undefined {
+    return this._contextDocument;
   }
 
   sortBy: SortBy = SortBy.Name;
 
   rename(name: string) {
     this._name = name;
-    this.label = name
+    this.label = name;
+  }
+
+  addContextDocument(resource: vscode.Uri): ContextDocument {
+    if (this._contextDocument) {
+        throw new Error(`'${this._name}' already has its context document`)
+    }
+    this._contextDocument = new ContextDocument(this, resource);
+    return this._contextDocument;
   }
 
   async getOrAddContextItem(
@@ -57,6 +70,9 @@ export class Context extends vscode.TreeItem {
 
   removeContextItemUri(resource: vscode.Uri) {
     const repr = resource.toString();
+    if (this._contextDocument?.resource?.toString() == resource.toString()) {
+      this._contextDocument = undefined;
+    }
     this._items = this._items.filter(
       (item) => item.resource.toString() != repr
     );
@@ -82,13 +98,13 @@ export class ContextItem extends vscode.TreeItem {
     this._ext = path.extname(this.resource.path);
     this.contextValue = "ccs.contextItem";
     this.command = {
-        title: "open",
-        command: "ccs.openItemInEditor",
-        arguments: [this]
-    }
+      title: "open",
+      command: "ccs.openItemInEditor",
+      arguments: [this],
+    };
   }
 
-  readonly name: string 
+  readonly name: string;
 
   private _ext: string;
   ext() {
@@ -99,6 +115,18 @@ export class ContextItem extends vscode.TreeItem {
 async function NewContextItem(context: Context, resource: vscode.Uri) {
   const stat = await vscode.workspace.fs.stat(resource);
   return new ContextItem(context, resource, stat.type);
+}
+
+class ContextDocument extends ContextItem {
+  constructor(readonly context: Context, resource: vscode.Uri) {
+    super(context, resource, vscode.FileType.File);
+    this.label = "Context Document";
+    this.command = {
+      title: "preview",
+      command: "markdown.showPreview",
+      arguments: [resource],
+    };
+  }
 }
 
 export class ContextsProvider
@@ -132,7 +160,12 @@ export class ContextsProvider
     }
 
     if (element instanceof Context) {
-      return Promise.resolve(element.items());
+      var items = element.items();
+      const contextDocument = element.contextDocument();
+      if (contextDocument) {
+        items = [contextDocument, ...items];
+      }
+      return Promise.resolve(items);
     }
 
     return Promise.resolve([]);

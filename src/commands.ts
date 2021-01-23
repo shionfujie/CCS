@@ -1,6 +1,7 @@
+import * as path from "path";
 import * as vscode from "vscode";
 import * as models from "./models";
-import * as ui from './ui'
+import * as ui from "./ui";
 
 export function Commands(
   provider: models.ContextsProvider,
@@ -19,12 +20,12 @@ export function Commands(
     });
   }
   async function RenameContext(context: models.Context) {
-    const name = await ui.showContextNameInputBox(provider, context.name())
-    if(!name) {
-      return
+    const name = await ui.showContextNameInputBox(provider, context.name());
+    if (!name) {
+      return;
     }
     context.rename(name);
-    provider.refresh()
+    provider.refresh();
     await treeView.reveal(context, {
       select: true,
       focus: true,
@@ -34,6 +35,25 @@ export function Commands(
   async function RemoveContext(context: models.Context) {
     provider.removeContext(context);
     provider.refresh();
+    const contextDocument = context.contextDocument()?.resource;
+    if (contextDocument) {
+      const dir = vscode.Uri.parse(path.dirname(contextDocument.path));
+      await vscode.workspace.fs.delete(dir, { recursive: true });
+    }
+  }
+  async function ViewContextDocument(context: models.Context) {
+    var cd = context.contextDocument();
+    if (!cd) {
+      const filepath = await createContextDocument(context.name());
+      cd = context.addContextDocument(filepath);
+      provider.refresh();
+    }
+
+    await vscode.commands.executeCommand("markdown.showPreview", cd.resource);
+    await treeView.reveal(cd, {
+      select: true,
+      focus: true,
+    });
   }
   function SortByName(context: models.Context) {
     if (context.sortBy != models.SortBy.Name) {
@@ -101,12 +121,13 @@ export function Commands(
     CreateNewContext,
     RenameContext,
     RemoveContext,
+    ViewContextDocument,
     SortByName,
     SortByCategory,
     AddItemToContext,
     RemoveItemFromContext,
     OpenItemInEditor,
-    SearchContext
+    SearchContext,
   };
 }
 
@@ -124,9 +145,9 @@ async function createOrGetContext(
 }
 
 // Showing a quick pick to choose a existing context or to create new one
-// Returns the item paired with the status which is true the item was newly 
+// Returns the item paired with the status which is true the item was newly
 // added to a context or false if the context was already containing it
-// During the process the user may choose to cancel. In those cases, it 
+// During the process the user may choose to cancel. In those cases, it
 // returns undefined
 async function getOrCreateContext(
   provider: models.ContextsProvider,
@@ -149,7 +170,29 @@ async function getOrCreateContext(
     }
   }
   if (!context) {
-      return
+    return;
   }
   return await context.getOrAddContextItem(uri);
+}
+
+async function createContextDocument(contextname: string) {
+  const filepath = getContextDocumentUri(contextname);
+  const wEdit = new vscode.WorkspaceEdit();
+  const pos = new vscode.Position(0, 0);
+  wEdit.createFile(filepath);
+  wEdit.insert(filepath, pos, `# Context: ${contextname}\n## Description`);
+  await vscode.workspace.applyEdit(wEdit);
+  return filepath;
+}
+
+function getContextDocumentUri(contextname: string): vscode.Uri {
+  const dir = getExtensionDir()
+  return dir.with({
+    path: path.join(dir.path, `/${contextname}/Context Document.md`),
+  });
+}
+
+function getExtensionDir(): vscode.Uri {
+  const wd = vscode.workspace.workspaceFolders![0].uri;
+  return wd.with({ path: path.join(wd.path, ".ccs") });
 }
