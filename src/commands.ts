@@ -171,5 +171,5 @@ async function getOrCreateContext(
   if (!context) {
     return;
   }
-  return await context.getOrAddContextItem(uri);
+  return await provider.getOrAddContextItem(context, uri)
 }

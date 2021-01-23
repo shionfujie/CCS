@@ -75,6 +75,19 @@ export class ContextsProvider
     return undefined;
   }
 
+  async getOrAddContextItem(
+    context: models.Context,
+    resource: vscode.Uri
+  ): Promise<[models.ContextItem, boolean]> {
+    var item = context.getContextItem(resource)
+    if (item) {
+      return [item, false];
+    }
+    item = await newContextItem(context, resource);
+    context.addContextItem(item);
+    return [item, true];
+  }
+
   async removeResourceFromContexts(resource: vscode.Uri) {
     const fs = vscode.workspace.fs;
     const stat = await fs.stat(resource);
@@ -98,4 +111,9 @@ export class ContextsProvider
   findContext(name: String): models.Context | undefined {
     return this._contexts.find((c) => c.name() == name);
   }
+}
+
+async function newContextItem(context: models.Context, resource: vscode.Uri) {
+  const stat = await vscode.workspace.fs.stat(resource);
+  return new models.ContextItem(context, resource, stat.type);
 }

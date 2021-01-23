@@ -54,20 +54,6 @@ export class Context extends SerializableTreeItem {
     return this._contextDocument;
   }
 
-  async getOrAddContextItem(
-    resource: vscode.Uri
-  ): Promise<[ContextItem, boolean]> {
-    const items = this._items;
-    const repr = resource.toString();
-    var item = items.find((item) => item.resource.toString() == repr);
-    if (item) {
-      return [item, false];
-    }
-    item = await NewContextItem(this, resource);
-    this.addContextItem(item);
-    return [item, true];
-  }
-
   addContextItem(item: ContextItem) {
     this._items.push(item);
   }
@@ -84,6 +70,11 @@ export class Context extends SerializableTreeItem {
     this._items = this._items.filter(
       (item) => item.resource.toString() != repr
     );
+  }
+
+  getContextItem(resource: vscode.Uri): ContextItem | undefined {
+    const repr = resource.toString();
+    return this._items.find((item) => item.resource.toString() == repr);
   }
 
   toJson() {
@@ -113,11 +104,11 @@ export class ContextItem extends vscode.TreeItem {
     }
     this.contextValue = "ccs.contextItem";
     this.command = {
-        title: "open",
-        command: "ccs.openItemInEditor",
-        arguments: [this],
+      title: "open",
+      command: "ccs.openItemInEditor",
+      arguments: [this],
     };
-    this.resourceUri = resource
+    this.resourceUri = resource;
     this.name = this.label as string;
     this._ext = path.extname(this.resource.path);
   }
@@ -137,20 +128,15 @@ export class ContextItem extends vscode.TreeItem {
   }
 }
 
-async function NewContextItem(context: Context, resource: vscode.Uri) {
-  const stat = await vscode.workspace.fs.stat(resource);
-  return new ContextItem(context, resource, stat.type);
-}
-
 class ContextDocument extends ContextItem {
   constructor(readonly context: Context, resource: vscode.Uri) {
     super(context, resource, vscode.FileType.File);
     this.label = "Context Document";
     this.command = {
-        title: "preview",
-        command: "markdown.showPreview",
-        arguments: [resource],
+      title: "preview",
+      command: "markdown.showPreview",
+      arguments: [resource],
     };
-    this.resourceUri = undefined
+    this.resourceUri = undefined;
   }
 }
