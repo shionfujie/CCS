@@ -65,9 +65,24 @@
 					"dark": "./media/dark/remove.svg",
 					"light": "./media/light/remove.svg"
 				}
+			},
+			{
+				"command": "ccs.refresh",
+				"title": "Refresh",
+				"icon": {
+					"dark": "./media/dark/refresh.svg",
+					"light": "./media/light/refresh.svg"
+				}
 			}
 		],
 		"menus": {
+			"view/title": [
+				{
+					"command": "ccs.refresh",
+					"when": "view == ccs.contextExplorer",
+					"group": "navigation@2"
+				}
+			],
 			"explorer/context": [
 				{
 					"command": "ccs.addItemToContext",
