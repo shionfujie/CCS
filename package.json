@@ -32,8 +32,21 @@
 					"dark": "./media/dark/add.svg",
 					"light": "./media/light/add.svg"
 				}
+			},
+			{
+				"command": "ccs.addItemToContext",
+				"title": "Add Item to Context",
+				"category": "Context"
 			}
-		]
+		],
+		"menus": {
+			"explorer/context": [
+				{
+					"command": "ccs.addItemToContext",
+					"group": "0_ccs.context"
+				}
+			]
+		}
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",

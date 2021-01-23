@@ -11,8 +11,12 @@ export function activate(context: vscode.ExtensionContext) {
     showCollapseAll: true,
   });
   const commands = cmd.Commands(provider, treeView)
+  provider.onDidChangeTreeData(() => {
+
+  });
   context.subscriptions.push(
-    vscode.commands.registerCommand("ccs.createNewContext", commands.createNewContext)
+    vscode.commands.registerCommand("ccs.createNewContext", commands.CreateNewContext),
+    vscode.commands.registerCommand("ccs.addItemToContext", commands.AddItemToContext)
   );
 }
 
