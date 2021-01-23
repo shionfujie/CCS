@@ -81,6 +81,22 @@ export function Commands(
     }
     vscode.commands.executeCommand("vscode.open", item.resource);
   }
+  async function SearchContext() {
+    const contexts = provider.contexts();
+    const items = contexts.map((c) => c.name());
+    const result = await vscode.window.showQuickPick(items, {
+      placeHolder: "Search contexts",
+    });
+    if (!result) {
+      return;
+    }
+    const chosenContext = provider.findContext(result) as models.Context;
+    await treeView.reveal(chosenContext, {
+      select: true,
+      focus: true,
+      expand: true,
+    });
+  }
   return {
     CreateNewContext,
     RenameContext,
@@ -89,7 +105,8 @@ export function Commands(
     SortByCategory,
     AddItemToContext,
     RemoveItemFromContext,
-    OpenItemInEditor
+    OpenItemInEditor,
+    SearchContext
   };
 }
 

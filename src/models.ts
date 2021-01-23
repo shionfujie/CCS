@@ -173,7 +173,7 @@ export class ContextsProvider
     this._onDidChangeTreeData.fire(elem);
   }
 
-  private findContext(name: String): Context | undefined {
+  findContext(name: String): Context | undefined {
     return this._contexts.find((c) => c.name() == name);
   }
 }

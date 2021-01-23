@@ -23,6 +23,7 @@ export function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("ccs.addItemToContext", commands.AddItemToContext),
     vscode.commands.registerCommand("ccs.removeItemFromContext", commands.RemoveItemFromContext),
     vscode.commands.registerCommand("ccs.openItemInEditor", commands.OpenItemInEditor),
+    vscode.commands.registerCommand("ccs.searchContext", commands.SearchContext),
     vscode.commands.registerCommand("ccs.refresh", () => provider.refresh())
   );
 }

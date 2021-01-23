@@ -71,6 +71,11 @@
 				"title": "Open Item in Editor"
 			},
 			{
+				"command": "ccs.searchContext",
+				"title": "Search Contexts",
+				"category": "Context"
+			},
+			{
 				"command": "ccs.refresh",
 				"title": "Refresh",
 				"icon": {
