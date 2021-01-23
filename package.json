@@ -84,6 +84,12 @@
 				}
 			}
 		],
+		"viewsWelcome": [
+			{
+				"view": "ccs.contextExplorer",
+				"contents": "[New Context](command:better-of-mine.addContext)"
+			}
+		],
 		"menus": {
 			"view/title": [
 				{
