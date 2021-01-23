@@ -87,6 +87,11 @@
 		"menus": {
 			"view/title": [
 				{
+					"command": "ccs.createNewContext",
+					"when": "view == ccs.contextExplorer",
+					"group": "navigation@1"
+				},
+				{
 					"command": "ccs.refresh",
 					"when": "view == ccs.contextExplorer",
 					"group": "navigation@2"
