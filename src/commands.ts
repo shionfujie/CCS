@@ -99,7 +99,7 @@ export function Commands(
       vscode.commands.executeCommand("revealInExplorer", item.resource);
       return;
     }
-    vscode.commands.executeCommand("vscode.open", item.resource);
+    vscode.commands.executeCommand("vscode.open", item.resource, { preserveFocus: true });
   }
   async function SearchContext() {
     const contexts = provider.contexts();
