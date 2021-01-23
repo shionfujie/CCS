@@ -34,6 +34,14 @@
 				}
 			},
 			{
+				"command": "ccs.removeContext",
+				"title": "Remove Context",
+				"icon": {
+					"dark": "./media/dark/trash.svg",
+					"light": "./media/light/trash.svg"
+				}
+			},
+			{
 				"command": "ccs.addItemToContext",
 				"title": "Add Item to Context",
 				"category": "Context"
@@ -44,6 +52,13 @@
 				{
 					"command": "ccs.addItemToContext",
 					"group": "0_ccs.context"
+				}
+			],
+			"view/item/context": [
+				{
+					"command": "ccs.removeContext",
+					"when": "viewItem == ccs.context",
+					"group": "navigation@2"
 				}
 			]
 		}

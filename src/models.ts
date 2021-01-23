@@ -5,6 +5,7 @@ export class Context extends vscode.TreeItem {
   constructor(private _name: string) {
     super(_name, vscode.TreeItemCollapsibleState.Expanded);
     this.id = _name;
+    this.contextValue = "ccs.context"
   }
   name() {
     return this._name;
@@ -116,6 +117,10 @@ export class ContextsProvider
     context = new Context(contextname);
     this._contexts.push(context);
     return context;
+  }
+
+  removeContext(context: Context) {
+    this._contexts = this._contexts.filter((c) => c.name() != context.name());
   }
 
   validateNewContextName(name: String): string | undefined {

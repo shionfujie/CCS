@@ -18,6 +18,10 @@ export function Commands(
       expand: true,
     });
   }
+  async function RemoveContext(context: models.Context) {
+    provider.removeContext(context);
+    provider.refresh();
+  }
   async function AddItemToContext(arg: any) {
     var uri: vscode.Uri | undefined;
     if (arg === undefined) {
@@ -43,6 +47,7 @@ export function Commands(
   }
   return {
     CreateNewContext,
+    RemoveContext,
     AddItemToContext,
   };
 }
