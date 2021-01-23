@@ -24,6 +24,7 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.commands.registerCommand("ccs.addItemToContext", commands.AddItemToContext),
     vscode.commands.registerCommand("ccs.removeItemFromContext", commands.RemoveItemFromContext),
     vscode.commands.registerCommand("ccs.openItemInEditor", commands.OpenItemInEditor),
+    vscode.commands.registerCommand("ccs.showInExplorer", commands.ShowInExplorer),
     vscode.commands.registerCommand("ccs.searchContext", commands.SearchContext),
     vscode.commands.registerCommand("ccs.refresh", async () => provider.refresh(await storage.GetContexts())),
     provider.onDidChangeTreeData(() => storage.SaveContexts(provider.contexts())),
