@@ -1,11 +1,7 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-abstract class SerializableTreeItem extends vscode.TreeItem {
-  abstract toJson(): any;
-}
-
-export class Context extends SerializableTreeItem {
+export class Context extends vscode.TreeItem {
   constructor(private _name: string) {
     super(_name, vscode.TreeItemCollapsibleState.Expanded);
     this.id = _name;
@@ -76,15 +72,6 @@ export class Context extends SerializableTreeItem {
     const repr = resource.toString();
     return this._items.find((item) => item.resource.toString() == repr);
   }
-
-  toJson() {
-    return {
-      name: this.name(),
-      sortBy: this.sortBy,
-      contextDescription: this._contextDocument?.toJson(),
-      items: this._items.map((i) => i.toJson()),
-    };
-  }
 }
 
 export enum SortBy {
@@ -118,13 +105,6 @@ export class ContextItem extends vscode.TreeItem {
   private _ext: string;
   ext() {
     return this._ext;
-  }
-
-  toJson(): any {
-    return {
-      resource: this.resource.toString(),
-      type: this.type,
-    };
   }
 }
 

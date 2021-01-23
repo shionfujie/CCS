@@ -1,73 +1,62 @@
 import * as path from "path";
 import * as vscode from "vscode";
 import * as models from "./models";
+import * as adapter from "./adapter";
 
-export async function CreateContextDocument(contextname: string) {
-  const filepath = getContextDocumentUri(contextname);
-  const wEdit = new vscode.WorkspaceEdit();
-  const pos = new vscode.Position(0, 0);
-  wEdit.createFile(filepath);
-  wEdit.insert(filepath, pos, `# Context: ${contextname}\n## Description`);
-  await vscode.workspace.applyEdit(wEdit);
-  return filepath;
+export interface Storage {
+    CreateContextDocument(contextname: string): Thenable<vscode.Uri>
+    DeleteContextDir(contextname: string): Thenable<void>
+    GetContexts(): Thenable<models.Context[]>
+    SaveContexts(contexts: models.Context[]): Thenable<void>
 }
 
-export function DeleteContextDir(contextname: string): Thenable<void> {
-  return vscode.workspace.fs.delete(getContextDir(contextname), {
-    recursive: true,
-  });
-}
-
-export async function GetContexts() {
-  const filepath = getContextsJsonUri();
-  if (!(await isExist(filepath))) {
-    return [];
+export function Storage(adapter: adapter.Adapter<models.Context[]>): Storage {
+  async function CreateContextDocument(contextname: string) {
+    const filepath = getContextDocumentUri(contextname);
+    const wEdit = new vscode.WorkspaceEdit();
+    const pos = new vscode.Position(0, 0);
+    wEdit.createFile(filepath);
+    wEdit.insert(filepath, pos, `# Context: ${contextname}\n## Description`);
+    await vscode.workspace.applyEdit(wEdit);
+    return filepath;
   }
-
-  const document = await vscode.workspace.openTextDocument(filepath);
-  const contexts: models.Context[] = [];
-  var contextsJson;
-  try {
-    contextsJson = JSON.parse(document.getText()).contexts;
-  } catch {
-    return [];
+  function DeleteContextDir(contextname: string): Thenable<void> {
+    return vscode.workspace.fs.delete(getContextDir(contextname), {
+      recursive: true,
+    });
   }
-  for (const contextJson of contextsJson) {
-    const context = new models.Context(contextJson.name);
-    contexts.push(context);
-    context.sortBy = contextJson.sortBy;
-    if (contextJson.contextDescription) {
-      context.addContextDocument(
-        vscode.Uri.parse(contextJson.contextDescription.resource)
-      );
+  async function GetContexts() {
+    const filepath = getContextsJsonUri();
+    if (!(await isExist(filepath))) {
+      return [];
     }
-    for (const itemJson of contextJson.items) {
-      context.addContextItem(
-        new models.ContextItem(
-          context,
-          vscode.Uri.parse(itemJson.resource),
-          itemJson.type
-        )
-      );
+    const document = await vscode.workspace.openTextDocument(filepath);
+    try {
+      const contexts = JSON.parse(document.getText()).contexts;
+      return adapter.Unmarshal(contexts)
+    } catch {
+      return [];
     }
   }
-  return contexts;
-}
+  async function SaveContexts(contexts: models.Context[]) {
+    const filepath = getContextsJsonUri();
 
-export async function SaveContexts(contexts: models.Context[]) {
-  const filepath = getContextsJsonUri();
+    var wEdit = new vscode.WorkspaceEdit();
+    wEdit.createFile(filepath, { overwrite: true });
+    await vscode.workspace.applyEdit(wEdit);
 
-  var wEdit = new vscode.WorkspaceEdit();
-  wEdit.createFile(filepath, { overwrite: true });
-  await vscode.workspace.applyEdit(wEdit);
-
-  wEdit = new vscode.WorkspaceEdit();
-  const pos = new vscode.Position(0, 0);
-  const json = {
-    contexts: contexts.map((c) => c.toJson()),
-  };
-  wEdit.insert(filepath, pos, JSON.stringify(json));
-  await vscode.workspace.applyEdit(wEdit);
+    wEdit = new vscode.WorkspaceEdit();
+    const pos = new vscode.Position(0, 0);
+    const data = JSON.stringify({ contexts: adapter.Marshal(contexts) });
+    wEdit.insert(filepath, pos, data);
+    await vscode.workspace.applyEdit(wEdit);
+  }
+  return {
+      CreateContextDocument,
+      DeleteContextDir,
+      GetContexts,
+      SaveContexts
+  }
 }
 
 function isExist(resource: vscode.Uri) {

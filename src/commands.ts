@@ -1,12 +1,13 @@
 import * as vscode from "vscode";
 import * as models from "./models";
 import * as provider from "./provider";
-import * as storage from "./storage";
+import {Storage} from "./storage";
 import * as ui from "./ui";
 
 export function Commands(
   provider: provider.ContextsProvider,
-  treeView: vscode.TreeView<vscode.TreeItem>
+  treeView: vscode.TreeView<vscode.TreeItem>,
+  storage: Storage
 ) {
   async function CreateNewContext() {
     const context = await createOrGetContext(provider);
