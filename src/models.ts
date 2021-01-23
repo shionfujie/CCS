@@ -111,14 +111,15 @@ export class ContextItem extends vscode.TreeItem {
     if (type == vscode.FileType.Directory) {
       this.label = this.label + "/";
     }
-    this.name = this.label as string;
-    this._ext = path.extname(this.resource.path);
     this.contextValue = "ccs.contextItem";
     this.command = {
-      title: "open",
-      command: "ccs.openItemInEditor",
-      arguments: [this],
+        title: "open",
+        command: "ccs.openItemInEditor",
+        arguments: [this],
     };
+    this.resourceUri = resource
+    this.name = this.label as string;
+    this._ext = path.extname(this.resource.path);
   }
 
   readonly name: string;
@@ -146,9 +147,10 @@ class ContextDocument extends ContextItem {
     super(context, resource, vscode.FileType.File);
     this.label = "Context Document";
     this.command = {
-      title: "preview",
-      command: "markdown.showPreview",
-      arguments: [resource],
+        title: "preview",
+        command: "markdown.showPreview",
+        arguments: [resource],
     };
+    this.resourceUri = undefined
   }
 }
