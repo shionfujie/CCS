@@ -2,17 +2,18 @@
 import * as vscode from "vscode";
 import * as models from "./models"
 import * as cmd from "./commands"
+import * as storage from './storage'
 
 
-export function activate(context: vscode.ExtensionContext) {
-  const provider = new models.ContextsProvider([]);
+export async function activate(context: vscode.ExtensionContext) {
+  const provider = new models.ContextsProvider(await storage.GetContexts());
   const treeView = vscode.window.createTreeView("ccs.contextExplorer", {
     treeDataProvider: provider,
     showCollapseAll: true,
   });
   const commands = cmd.Commands(provider, treeView)
   provider.onDidChangeTreeData(() => {
-
+    storage.SaveContexts(provider.contexts())
   });
   context.subscriptions.push(
     vscode.commands.registerCommand("ccs.createNewContext", commands.CreateNewContext),

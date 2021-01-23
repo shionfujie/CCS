@@ -1,6 +1,6 @@
-import * as path from "path";
 import * as vscode from "vscode";
 import * as models from "./models";
+import * as storage from "./storage";
 import * as ui from "./ui";
 
 export function Commands(
@@ -35,16 +35,14 @@ export function Commands(
   async function RemoveContext(context: models.Context) {
     provider.removeContext(context);
     provider.refresh();
-    const contextDocument = context.contextDocument()?.resource;
-    if (contextDocument) {
-      const dir = vscode.Uri.parse(path.dirname(contextDocument.path));
-      await vscode.workspace.fs.delete(dir, { recursive: true });
+    if (context.contextDocument()) {
+      await storage.DeleteContextDir(context.name())
     }
   }
   async function ViewContextDocument(context: models.Context) {
     var cd = context.contextDocument();
     if (!cd) {
-      const filepath = await createContextDocument(context.name());
+      const filepath = await storage.CreateContextDocument(context.name());
       cd = context.addContextDocument(filepath);
       provider.refresh();
     }
@@ -173,26 +171,4 @@ async function getOrCreateContext(
     return;
   }
   return await context.getOrAddContextItem(uri);
-}
-
-async function createContextDocument(contextname: string) {
-  const filepath = getContextDocumentUri(contextname);
-  const wEdit = new vscode.WorkspaceEdit();
-  const pos = new vscode.Position(0, 0);
-  wEdit.createFile(filepath);
-  wEdit.insert(filepath, pos, `# Context: ${contextname}\n## Description`);
-  await vscode.workspace.applyEdit(wEdit);
-  return filepath;
-}
-
-function getContextDocumentUri(contextname: string): vscode.Uri {
-  const dir = getExtensionDir()
-  return dir.with({
-    path: path.join(dir.path, `/${contextname}/Context Document.md`),
-  });
-}
-
-function getExtensionDir(): vscode.Uri {
-  const wd = vscode.workspace.workspaceFolders![0].uri;
-  return wd.with({ path: path.join(wd.path, ".ccs") });
 }

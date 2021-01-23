@@ -1,7 +1,11 @@
 import * as path from "path";
 import * as vscode from "vscode";
 
-export class Context extends vscode.TreeItem {
+abstract class SerializableTreeItem extends vscode.TreeItem {
+  abstract toJson(): any;
+}
+
+export class Context extends SerializableTreeItem {
   constructor(private _name: string) {
     super(_name, vscode.TreeItemCollapsibleState.Expanded);
     this.id = _name;
@@ -44,7 +48,7 @@ export class Context extends vscode.TreeItem {
 
   addContextDocument(resource: vscode.Uri): ContextDocument {
     if (this._contextDocument) {
-        throw new Error(`'${this._name}' already has its context document`)
+      throw new Error(`'${this._name}' already has its context document`);
     }
     this._contextDocument = new ContextDocument(this, resource);
     return this._contextDocument;
@@ -60,8 +64,12 @@ export class Context extends vscode.TreeItem {
       return [item, false];
     }
     item = await NewContextItem(this, resource);
-    this._items.push(item);
+    this.addContextItem(item)
     return [item, true];
+  }
+
+  addContextItem(item: ContextItem) {
+    this._items.push(item);
   }
 
   removeContextItem(item: ContextItem) {
@@ -76,6 +84,15 @@ export class Context extends vscode.TreeItem {
     this._items = this._items.filter(
       (item) => item.resource.toString() != repr
     );
+  }
+
+  toJson() {
+    return {
+      name: this.name(),
+      sortBy: this.sortBy,
+      contextDescription: this._contextDocument?.toJson(),
+      items: this._items.map((i) => i.toJson()),
+    };
   }
 }
 
@@ -109,6 +126,13 @@ export class ContextItem extends vscode.TreeItem {
   private _ext: string;
   ext() {
     return this._ext;
+  }
+
+  toJson(): any {
+    return {
+      resource: this.resource.toString(),
+      type: this.type,
+    };
   }
 }
 
