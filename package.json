@@ -80,6 +80,14 @@
 				"title": "Open Item in Editor"
 			},
 			{
+				"command": "ccs.showInExplorer",
+				"title": "Show in Explorer",
+				"icon": {
+					"dark": "./media/dark/go-to-file.svg",
+					"light": "./media/light/go-to-file.svg"
+				}
+			},
+			{
 				"command": "ccs.searchContext",
 				"title": "Search Contexts",
 				"category": "Context"
@@ -147,6 +155,11 @@
 				{
 					"command": "ccs.removeItemFromContext",
 					"when": "viewItem == ccs.contextItem"
+				},
+				{
+					"command": "ccs.showInExplorer",
+					"when": "viewItem == ccs.contextItem",
+					"group": "inline"
 				}
 			]
 		}

@@ -101,6 +101,9 @@ export function Commands(
     }
     vscode.commands.executeCommand("vscode.open", item.resource, { preserveFocus: true });
   }
+  function ShowInExplorer(item: models.ContextItem) {
+    vscode.commands.executeCommand("revealInExplorer", item.resource)
+  }
   async function SearchContext() {
     const contexts = provider.contexts();
     const items = contexts.map((c) => c.name());
@@ -127,6 +130,7 @@ export function Commands(
     AddItemToContext,
     RemoveItemFromContext,
     OpenItemInEditor,
+    ShowInExplorer,
     SearchContext,
   };
 }
