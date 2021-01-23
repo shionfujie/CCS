@@ -64,7 +64,7 @@ export class Context extends SerializableTreeItem {
       return [item, false];
     }
     item = await NewContextItem(this, resource);
-    this.addContextItem(item)
+    this.addContextItem(item);
     return [item, true];
   }
 
@@ -150,87 +150,5 @@ class ContextDocument extends ContextItem {
       command: "markdown.showPreview",
       arguments: [resource],
     };
-  }
-}
-
-export class ContextsProvider
-  implements vscode.TreeDataProvider<vscode.TreeItem> {
-  constructor(private _contexts: Context[]) {}
-
-  contexts() {
-    return this._contexts;
-  }
-
-  private _onDidChangeTreeData = new vscode.EventEmitter<
-    vscode.TreeItem | undefined | null | void
-  >();
-  readonly onDidChangeTreeData: vscode.Event<
-    vscode.TreeItem | undefined | null | void
-  > = this._onDidChangeTreeData.event;
-
-  getTreeItem(
-    element: vscode.TreeItem
-  ): vscode.TreeItem | Thenable<vscode.TreeItem> {
-    return element;
-  }
-
-  getChildren(
-    element?: vscode.TreeItem
-  ): vscode.ProviderResult<vscode.TreeItem[]> {
-    if (!element) {
-      return Promise.resolve(
-        this._contexts.sort((c, c1) => c.name().localeCompare(c1.name()))
-      );
-    }
-
-    if (element instanceof Context) {
-      var items = element.items();
-      const contextDocument = element.contextDocument();
-      if (contextDocument) {
-        items = [contextDocument, ...items];
-      }
-      return Promise.resolve(items);
-    }
-
-    return Promise.resolve([]);
-  }
-
-  getParent(element: vscode.TreeItem): vscode.ProviderResult<vscode.TreeItem> {
-    if (element instanceof ContextItem) {
-      return element.context;
-    }
-    return null;
-  }
-
-  getOrCreateContext(contextname: string) {
-    var context = this.findContext(contextname);
-    if (context) {
-      return context;
-    }
-    context = new Context(contextname);
-    this._contexts.push(context);
-    return context;
-  }
-
-  removeContext(context: Context) {
-    this._contexts = this._contexts.filter((c) => c.name() != context.name());
-  }
-
-  validateNewContextName(name: String): string | undefined {
-    if (name.length == 0) {
-      return "Context name expected to be non-empty";
-    }
-    if (this.findContext(name)) {
-      return `Context '${name}' already exists`;
-    }
-    return undefined;
-  }
-
-  refresh(elem?: vscode.TreeItem): void {
-    this._onDidChangeTreeData.fire(elem);
-  }
-
-  findContext(name: String): Context | undefined {
-    return this._contexts.find((c) => c.name() == name);
   }
 }

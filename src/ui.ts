@@ -1,8 +1,9 @@
 import * as vscode from "vscode";
 import * as models from "./models";
+import * as provider from "./provider";
 
 export function showContextNameInputBox(
-  provider: models.ContextsProvider,
+  provider: provider.ContextsProvider,
   value?: string
 ) {
   return vscode.window.showInputBox({
@@ -15,7 +16,7 @@ export function showContextNameInputBox(
 }
 
 export async function showContextQuickPick(
-  provider: models.ContextsProvider
+  provider: provider.ContextsProvider
 ): Promise<[string, vscode.QuickPickItem] | undefined> {
   const disposables: vscode.Disposable[] = [];
   try {

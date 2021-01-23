@@ -1,10 +1,11 @@
 import * as vscode from "vscode";
 import * as models from "./models";
+import * as provider from "./provider";
 import * as storage from "./storage";
 import * as ui from "./ui";
 
 export function Commands(
-  provider: models.ContextsProvider,
+  provider: provider.ContextsProvider,
   treeView: vscode.TreeView<vscode.TreeItem>
 ) {
   async function CreateNewContext() {
@@ -132,7 +133,7 @@ export function Commands(
 // First prompting the context's name being created
 // Returns a new context or existing one if there is such coinciding in its name
 async function createOrGetContext(
-  provider: models.ContextsProvider,
+  provider: provider.ContextsProvider,
   value?: string
 ) {
   const result = await ui.showContextNameInputBox(provider, value);
@@ -148,7 +149,7 @@ async function createOrGetContext(
 // During the process the user may choose to cancel. In those cases, it
 // returns undefined
 async function getOrCreateContext(
-  provider: models.ContextsProvider,
+  provider: provider.ContextsProvider,
   uri: vscode.Uri
 ) {
   const result = await ui.showContextQuickPick(provider);
