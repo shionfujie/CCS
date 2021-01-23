@@ -22,7 +22,18 @@
 					"contextualTitle": "Context Explorer"
 				}
 			]
-		}
+		},
+		"commands": [
+			{
+				"command": "ccs.createNewContext",
+				"title": "Create New Context",
+				"category": "Context",
+				"icon": {
+					"dark": "./media/dark/add.svg",
+					"light": "./media/light/add.svg"
+				}
+			}
+		]
 	},
 	"scripts": {
 		"vscode:prepublish": "npm run compile",
