@@ -18,6 +18,19 @@ export function Commands(
       expand: true,
     });
   }
+  async function RenameContext(context: models.Context) {
+    const name = await ui.showContextNameInputBox(provider, context.name())
+    if(!name) {
+      return
+    }
+    context.rename(name);
+    provider.refresh()
+    await treeView.reveal(context, {
+      select: true,
+      focus: true,
+      expand: true,
+    });
+  }
   async function RemoveContext(context: models.Context) {
     provider.removeContext(context);
     provider.refresh();
@@ -51,6 +64,7 @@ export function Commands(
   }
   return {
     CreateNewContext,
+    RenameContext,
     RemoveContext,
     AddItemToContext,
     RemoveItemFromContext

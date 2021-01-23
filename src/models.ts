@@ -25,6 +25,11 @@ export class Context extends vscode.TreeItem {
 
   sortBy: SortBy = SortBy.Category;
 
+  rename(name: string) {
+    this._name = name;
+    this.label = name
+  }
+
   async getOrAddContextItem(
     resource: vscode.Uri
   ): Promise<[ContextItem, boolean]> {

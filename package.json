@@ -34,6 +34,10 @@
 				}
 			},
 			{
+				"command": "ccs.renameContext",
+				"title": "Rename"
+			},
+			{
 				"command": "ccs.removeContext",
 				"title": "Remove Context",
 				"icon": {
@@ -47,7 +51,7 @@
 				"category": "Context"
 			},
 			{
-				"command": "css.removeItemFromContext",
+				"command": "ccs.removeItemFromContext",
 				"title": "Remove Item from Context",
 				"icon": {
 					"dark": "./media/dark/remove.svg",
@@ -64,12 +68,17 @@
 			],
 			"view/item/context": [
 				{
+					"command": "ccs.renameContext",
+					"when": "viewItem == ccs.context",
+					"group": "navigation@1"
+				},
+				{
 					"command": "ccs.removeContext",
 					"when": "viewItem == ccs.context",
 					"group": "navigation@2"
 				},
 				{
-					"command": "css.removeItemFromContext",
+					"command": "ccs.removeItemFromContext",
 					"when": "viewItem == ccs.contextItem"
 				}
 			]
